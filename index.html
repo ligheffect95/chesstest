@@ -11,32 +11,28 @@
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
-    <style>
-        :root { --duo-green: #58cc02; --mta-dark: #121212; }
-        body { 
-            background: var(--mta-dark); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-            overflow: hidden;
-            color: white;
-            font-family: sans-serif;
-        }
-        /* CRITICAL: The board needs a width or it stays invisible */
-        #board { 
-            width: 90vw; 
-            max-width: 400px; 
-            margin: 0 auto;
-        }
-        .status { margin-bottom: 20px; color: var(--duo-green); font-weight: bold; text-transform: uppercase; }
-        
-        /* THEME */
-        .black-3c85d { background-color: var(--duo-green) !important; }
-        .white-1e1d7 { background-color: #ffffff !important; }
-    </style>
+   <style>
+    :root { 
+        --mta-dark-grey: #444444;  /* Dark squares */
+        --mta-light-grey: #cccccc; /* Light squares */
+        --mta-background: #121212; /* Deep background */
+        --status-green: #58cc02;   /* Keep the Duo green for text */
+    }
+    
+    body { 
+        background: var(--mta-background); 
+        display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        height: 100vh; margin: 0; overflow: hidden; font-family: sans-serif;
+    }
+
+    #board { width: 92vw; max-width: 450px; }
+
+    .status { margin-bottom: 20px; color: var(--status-green); font-weight: 900; letter-spacing: 1px; }
+
+    /* GREY THEME OVERRIDES */
+    .black-3c85d { background-color: var(--mta-dark-grey) !important; }
+    .white-1e1d7 { background-color: var(--mta-light-grey) !important; }
+</style>
 </head>
 <body>
 
