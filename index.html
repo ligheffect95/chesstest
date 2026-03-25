@@ -6,15 +6,15 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <title>MTA Chess | 620 ELO</title>
+    <title>Luke Chess | 620 ELO</title>
 
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="chessboard.min.js"></script>
+    <script src="chess.min.js"></script>
 
     <style>
-        /* THE VISUAL SYSTEM */
+        /* 2. THE DUOLINGO VISUAL SYSTEM */
         :root {
             --duo-green: #58cc02;
             --mta-dark: #121212;
@@ -31,14 +31,15 @@
             margin: 0; 
             font-family: -apple-system, system-ui, sans-serif;
             overflow: hidden;
-            touch-action: none; /* Stops swipe-to-refresh on mobile */
+            touch-action: none; 
         }
         
         #board-container {
             width: 92vw; 
             max-width: 450px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            border-radius: 6px;
+            border-radius: 8px;
+            background: white; /* Prevents flickering during load */
         }
 
         .status-bar { 
@@ -50,104 +51,6 @@
             letter-spacing: 1px;
         }
 
-        /* DUOLINGO THEME OVERRIDE FOR CHESSBOARD.JS */
+        /* CUSTOM THEME OVERRIDE: Swapping default colors for Duolingo Green */
         .black-3c85d { background-color: var(--duo-green) !important; }
-        .white-1e1d7 { background-color: #ffffff !important; }
-        
-        /* Highlight last move */
-        .highlight-white { box-shadow: inset 0 0 3px 3px rgba(255, 255, 0, 0.5); }
-        .highlight-black { box-shadow: inset 0 0 3px 3px rgba(255, 255, 0, 0.5); }
-    </style>
-</head>
-<body>
-
-    <div class="status-bar" id="status">YOUR MOVE</div>
-    <div id="board-container"></div>
-
-    <script>
-        // 1. INITIALIZE THE ENGINES
-        var board = null;
-        var game = new Chess();
-        var $status = $('#status');
-
-        // 2. THE 620 ELO BRAIN
-        // Instead of a heavy Stockfish file, this custom logic simulates a beginner.
-        // It looks for captures 70% of the time. Otherwise, it makes a random move.
-        function make620EloMove() {
-            var moves = game.moves({ verbose: true });
-            if (moves.length === 0) return; // Game over
-
-            var moveObj;
-            var captures = moves.filter(function(m) { return m.captured; });
-
-            // 70% chance to take a free piece if available (simulating beginner tunnel vision)
-            if (captures.length > 0 && Math.random() > 0.3) {
-                moveObj = captures[Math.floor(Math.random() * captures.length)];
-            } else {
-                // Otherwise, completely random vibe move
-                moveObj = moves[Math.floor(Math.random() * moves.length)];
-            }
-
-            game.move(moveObj.san);
-            board.position(game.fen());
-            
-            // Computer move haptic (Double pulse)
-            if (navigator.vibrate) navigator.vibrate([20, 50, 20]);
-            updateStatus();
-        }
-
-        // 3. GAMEPLAY LOGIC
-        function onDragStart (source, piece) {
-            // Do not pick up pieces if the game is over or if it's the computer's turn
-            if (game.game_over() || piece.search(/^b/) !== -1) return false;
-        }
-
-        function onDrop (source, target) {
-            // See if the move is legal
-            var move = game.move({
-                from: source,
-                to: target,
-                promotion: 'q' // Auto-promote to Queen
-            });
-
-            // Illegal move: snap back
-            if (move === null) return 'snapback';
-
-            // Legal move: Player haptic (Single sharp tap)
-            if (navigator.vibrate) navigator.vibrate(40);
-
-            updateStatus();
-
-            // Trigger the AI after a short delay to feel "human"
-            window.setTimeout(make620EloMove, 700);
-        }
-
-        function updateStatus () {
-            var statusStr = '';
-            var moveColor = game.turn() === 'w' ? 'YOUR MOVE' : 'COMPUTER THINKING...';
-
-            if (game.in_checkmate()) {
-                statusStr = 'CHECKMATE';
-            } else if (game.in_draw()) {
-                statusStr = 'DRAW';
-            } else {
-                statusStr = moveColor;
-                if (game.in_check()) statusStr += ' (CHECK)';
-            }
-            $status.html(statusStr);
-        }
-
-        // 4. RENDER THE BOARD
-        var config = {
-            draggable: true,
-            position: 'start',
-            onDragStart: onDragStart,
-            onDrop: onDrop,
-            pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png'
-        };
-        
-        board = Chessboard('board-container', config);
-        updateStatus();
-    </script>
-</body>
-</html>
+        .white-1e1d7 { background
