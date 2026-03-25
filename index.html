@@ -6,33 +6,33 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>MTA Chess | 620 ELO</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    <link rel="stylesheet" href="chessboard.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    <script src="chessboard.min.js"></script>
+    <script src="chess.min.js"></script>
 
-   <style>
-    :root { 
-        --mta-dark-grey: #444444;  /* Dark squares */
-        --mta-light-grey: #cccccc; /* Light squares */
-        --mta-background: #121212; /* Deep background */
-        --status-green: #58cc02;   /* Keep the Duo green for text */
-    }
-    
-    body { 
-        background: var(--mta-background); 
-        display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        height: 100vh; margin: 0; overflow: hidden; font-family: sans-serif;
-    }
+    <style>
+        :root { 
+            --mta-dark-grey: #444444; 
+            --mta-light-grey: #cccccc; 
+            --mta-background: #121212; 
+            --status-green: #58cc02; 
+        }
+        
+        body { 
+            background: var(--mta-background); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; overflow: hidden; font-family: -apple-system, sans-serif;
+        }
 
-    #board { width: 92vw; max-width: 450px; }
+        #board { width: 92vw; max-width: 450px; min-height: 300px; }
 
-    .status { margin-bottom: 20px; color: var(--status-green); font-weight: 900; letter-spacing: 1px; }
+        .status { margin-bottom: 20px; color: var(--status-green); font-weight: 900; letter-spacing: 1px; }
 
-    /* GREY THEME OVERRIDES */
-    .black-3c85d { background-color: var(--mta-dark-grey) !important; }
-    .white-1e1d7 { background-color: var(--mta-light-grey) !important; }
-</style>
+        /* MTA GREY THEME */
+        .black-3c85d { background-color: var(--mta-dark-grey) !important; }
+        .white-1e1d7 { background-color: var(--mta-light-grey) !important; }
+    </style>
 </head>
 <body>
 
@@ -40,17 +40,83 @@
     <div id="board"></div>
 
     <script>
-        // Use a simple init to prove the board works
-        var board = Chessboard('board', {
-            draggable: true,
-            dropOffBoard: 'snapback',
-            position: 'start',
-            // Pointing to your sliced SVGs
-            pieceTheme: 'assets/pieces/{piece}.svg'
-        });
+        $(document).ready(function() {
+            var board = null;
+            var game = new Chess();
+            var $status = $('#status');
 
-        // Basic "Vibe" Resize for mobile
-        $(window).resize(board.resize);
+            // --- THE COMPUTER OPPONENT ---
+            function makeMove() {
+                var moves = game.moves();
+                if (moves.length === 0) return; // Game over
+
+                // 620 ELO Logic: 70% chance to take a free piece if available
+                var move;
+                var captures = game.moves({ verbose: true }).filter(m => m.captured);
+                
+                if (captures.length > 0 && Math.random() > 0.3) {
+                    move = captures[Math.floor(Math.random() * captures.length)].san;
+                } else {
+                    move = moves[Math.floor(Math.random() * moves.length)];
+                }
+
+                game.move(move);
+                board.position(game.fen());
+                
+                if (navigator.vibrate) navigator.vibrate([20, 50, 20]); // Haptic double-tap
+                updateStatus();
+            }
+
+            // --- THE REFEREE (Constraints) ---
+            function onDragStart (source, piece) {
+                // Do not pick up pieces if the game is over
+                if (game.game_over()) return false;
+                
+                // Only pick up White pieces (you are playing White)
+                if (piece.search(/^b/) !== -1) return false;
+            }
+
+            function onDrop (source, target) {
+                // Check if the move is legal
+                var move = game.move({
+                    from: source,
+                    to: target,
+                    promotion: 'q' 
+                });
+
+                // If illegal move, snap the piece back to where it was
+                if (move === null) return 'snapback';
+
+                if (navigator.vibrate) navigator.vibrate(40); // Haptic single-tap
+                
+                updateStatus();
+                
+                // Tell the computer to make a move 600ms later
+                window.setTimeout(makeMove, 600);
+            }
+
+            function updateStatus () {
+                var status = 'Your Move';
+                if (game.in_checkmate()) status = 'Checkmate! You Win.';
+                else if (game.in_draw()) status = 'Draw.';
+                else if (game.turn() === 'b') status = 'Thinking...';
+                
+                $status.html(status.toUpperCase());
+            }
+
+            // --- INITIALIZE EVERYTHING ---
+            var config = {
+                draggable: true,
+                position: 'start',
+                onDragStart: onDragStart,
+                onDrop: onDrop,
+                pieceTheme: 'assets/pieces/{piece}.svg' 
+            };
+            
+            board = Chessboard('board', config);
+            updateStatus();
+            $(window).resize(board.resize);
+        });
     </script>
 </body>
 </html>
