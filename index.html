@@ -1,56 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MTA Chess</title>
     
-    <title>Luke Chess | 620 ELO</title>
-
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="chessboard.min.js"></script>
-    <script src="chess.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
     <style>
-        /* 2. THE DUOLINGO VISUAL SYSTEM */
-        :root {
-            --duo-green: #58cc02;
-            --mta-dark: #121212;
-            --text-color: #f0f0f0;
-        }
-
-        body { 
-            background: var(--mta-dark); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            margin: 0; 
-            font-family: -apple-system, system-ui, sans-serif;
-            overflow: hidden;
-            touch-action: none; 
-        }
-        
-        #board-container {
-            width: 92vw; 
-            max-width: 450px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            border-radius: 8px;
-            background: white; /* Prevents flickering during load */
-        }
-
-        .status-bar { 
-            color: var(--duo-green); 
-            font-size: 1.25rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            margin-bottom: 20px;
-            letter-spacing: 1px;
-        }
-
-        /* CUSTOM THEME OVERRIDE: Swapping default colors for Duolingo Green */
-        .black-3c85d { background-color: var(--duo-green) !important; }
-        .white-1e1d7 { background
+        body { background: #121212; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        #board { width: 90vw; max-width: 400px; }
+        /* DUOLINGO GREEN */
+        .black-3c85d { background-color: #58cc02 !important; }
+        .white-1e1d7 { background-color: #ffffff !important; }
+    </style>
+</head>
+<body>
+    <div id="board"></div>
+    <script>
+        var board = Chessboard('board', {
+            draggable: true,
+            dropOffBoard: 'snapback',
+            position: 'start'
+        });
+    </script>
+</body>
+</html>
