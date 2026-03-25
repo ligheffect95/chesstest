@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>MTA Chess | 620 ELO</title>
 
-    <link rel="stylesheet" href="chessboard.min.css">
+    <link rel="stylesheet" href="chessboard.min.css" onerror="this.href='https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css'">
+    
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="chessboard.min.js"></script>
-    <script src="chess.min.js"></script>
+    
+    <script src="chessboard.min.js" onerror="this.src='https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js'"></script>
+    <script src="chess.min.js" onerror="this.src='https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js'"></script>
+
+    <style>
+        :root { --duo-green: #58cc02; --mta-dark: #121212; }
+        body { background: var(--mta-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; overflow: hidden; }
+        #board-container { width: 92vw; max-width: 450px; background: #fff; border-radius: 8px; }
+        .status-bar { color: var(--duo-green); font-size: 1.25rem; font-weight: 800; margin-bottom: 20px; }
+        .black-3c85d { background-color: var(--duo-green) !important; }
+        .white-1e1d7 { background-color: #ffffff !important; }
+    </style>
 
     <style>
         :root {
