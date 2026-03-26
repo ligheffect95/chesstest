@@ -13,10 +13,10 @@
 
     <style>
         :root { 
-            --dark-square: #2b2624;  /* Cast iron */
-            --light-square: #8c8279; /* Weathered stone */
-            --main-bg: #111111;      /* Deep void */
-            --status-text: #c96f3d;  /* Rusted terracotta */
+            --dark-square: #121f26; 
+            --light-square: #1d353d; 
+            --main-bg: #121212;      
+            --status-text: #c96f3d;  
         }
         
         body { 
@@ -44,6 +44,7 @@
             var board = null;
             var game = new Chess();
             var $status = $('#status');
+            var selectedSquare = null;
 
             function makeMove() {
                 var moves = game.moves();
@@ -65,25 +66,47 @@
                 updateStatus();
             }
 
-            function onDragStart (source, piece) {
-                if (game.game_over()) return false;
-                if (piece.search(/^b/) !== -1) return false;
-            }
+            // TAP TO MOVE LOGIC
+            $('#board').on('click', '.square-55d63', function() {
+                if (game.game_over() || game.turn() !== 'w') return;
 
-            function onDrop (source, target) {
-                var move = game.move({
-                    from: source,
-                    to: target,
-                    promotion: 'q' 
-                });
+                var square = $(this).attr('data-square');
+                var piece = game.get(square);
 
-                if (move === null) return 'snapback';
+                // 1. Tapping your own piece selects it
+                if (piece && piece.color === 'w') {
+                    selectedSquare = square;
+                    $('.square-55d63').css('box-shadow', ''); 
+                    $(this).css('box-shadow', 'inset 0 0 0 4px var(--status-text)'); 
+                    return;
+                }
 
-                if (navigator.vibrate) navigator.vibrate(40);
-                
-                updateStatus();
-                window.setTimeout(makeMove, 600);
-            }
+                // 2. Tapping somewhere else to move
+                if (selectedSquare) {
+                    var move = game.move({
+                        from: selectedSquare,
+                        to: square,
+                        promotion: 'q' 
+                    });
+
+                    // If illegal move, just deselect
+                    if (move === null) {
+                        selectedSquare = null;
+                        $('.square-55d63').css('box-shadow', '');
+                        return;
+                    }
+
+                    // Move was legal
+                    board.position(game.fen());
+                    selectedSquare = null;
+                    $('.square-55d63').css('box-shadow', '');
+
+                    if (navigator.vibrate) navigator.vibrate(40);
+                    
+                    updateStatus();
+                    window.setTimeout(makeMove, 600);
+                }
+            });
 
             function updateStatus () {
                 var statusStr = 'Your Move';
@@ -95,10 +118,8 @@
             }
 
             var config = {
-                draggable: true,
+                draggable: false, // Dragging is permanently disabled
                 position: 'start',
-                onDragStart: onDragStart,
-                onDrop: onDrop,
                 pieceTheme: 'assets/pieces/{piece}.svg' 
             };
             
