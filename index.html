@@ -4,35 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>MTA Chess | 620 ELO</title>
+    <title>Luke's Chess | Retrograde</title>
 
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
 
     <style>
         :root { 
-            --mta-dark-grey: #444444; 
-            --mta-light-grey: #cccccc; 
-            --mta-background: #121212; 
-            --status-green: #58cc02; 
+            --dark-square: #2b2624;  /* Cast iron */
+            --light-square: #8c8279; /* Weathered stone */
+            --main-bg: #111111;      /* Deep void */
+            --status-text: #c96f3d;  /* Rusted terracotta */
         }
         
         body { 
-            background: var(--mta-background); 
+            background: var(--main-bg); 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             height: 100vh; margin: 0; overflow: hidden; font-family: -apple-system, sans-serif;
         }
 
         #board { width: 92vw; max-width: 450px; min-height: 300px; display: block; margin: 0 auto; }
 
-        .status { margin-bottom: 20px; color: var(--status-green); font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
+        .status { margin-bottom: 20px; color: var(--status-text); font-weight: 900; letter-spacing: 1px; text-transform: uppercase;}
 
-        /* MTA GREY THEME */
-        .black-3c85d { background-color: var(--mta-dark-grey) !important; }
-        .white-1e1d7 { background-color: var(--mta-light-grey) !important; }
+        /* BOARD THEME */
+        .black-3c85d { background-color: var(--dark-square) !important; }
+        .white-1e1d7 { background-color: var(--light-square) !important; }
     </style>
 </head>
 <body>
@@ -41,7 +40,6 @@
     <div id="board"></div>
 
     <script>
-        // Wait for the page to load before doing anything
         $(document).ready(function() {
             var board = null;
             var game = new Chess();
@@ -101,7 +99,6 @@
                 position: 'start',
                 onDragStart: onDragStart,
                 onDrop: onDrop,
-                // STILL POINTING TO YOUR LOCAL SVGS
                 pieceTheme: 'assets/pieces/{piece}.svg' 
             };
             
